@@ -6,6 +6,8 @@
 
 !abrir_porta.
 !abrir_janela.
+!ligar_luz.
+!desligar_luz
 
 /* Plans */
 
@@ -17,6 +19,16 @@
 +!abrir_janela : true <- 
     .print("hello world."); 
     destrancar[artifact_id(janela1)];
+    .print("Janela destrancada.").
+
++!ligar_luz : true <- 
+    .print("hello world."); 
+    ligar[artifact_id(lampada1)];
+    .print("Porta destrancada.").
+
++!desligar_luz : true <- 
+    .print("hello world."); 
+    desligar[artifact_id(lampada1)];
     .print("Janela destrancada.").
 
 { include("$jacamoJar/templates/common-cartago.asl") }
