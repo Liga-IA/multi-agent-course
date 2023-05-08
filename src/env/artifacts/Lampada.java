@@ -4,8 +4,9 @@ import cartago.*;
 import jason.asSyntax.Literal;
 import java.lang.Math;
 
-public class Janela extends Artifact {
 
+public class Lampada extends Artifact{
+    
 	private int desligada;
 	private int ligada;
     
@@ -34,5 +35,6 @@ public class Janela extends Artifact {
         prop.updateValue(0);
         signal("tick");
     }
+
 
 }

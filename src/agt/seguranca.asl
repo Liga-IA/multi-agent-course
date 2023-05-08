@@ -6,29 +6,19 @@
 
 !abrir_porta.
 !abrir_janela.
-!ligar_luz.
-!desligar_luz
+!aumentar_nivel.
+!diminuir_nivel.
+
+
 
 /* Plans */
 
-+!abrir_porta : true <- 
-    .print("hello world."); 
++!abrir_porta : true <-
     destrancar[artifact_id(porta1)];
     .print("Porta destrancada.").
 
-+!abrir_janela : true <- 
-    .print("hello world."); 
++!abrir_janela : true <-
     destrancar[artifact_id(janela1)];
-    .print("Janela destrancada.").
-
-+!ligar_luz : true <- 
-    .print("hello world."); 
-    ligar[artifact_id(lampada1)];
-    .print("Porta destrancada.").
-
-+!desligar_luz : true <- 
-    .print("hello world."); 
-    desligar[artifact_id(lampada1)];
     .print("Janela destrancada.").
 
 { include("$jacamoJar/templates/common-cartago.asl") }

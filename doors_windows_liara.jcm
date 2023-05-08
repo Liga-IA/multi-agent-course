@@ -14,16 +14,25 @@
 
 mas doors_windows_liara {
 
-    agent bob: sample_agent.asl {
+    agent temperatura: temperatura.asl{
+    }
+
+    agent seguranca: seguranca.asl {
       focus: w.porta1
       focus: w.janela1
+      focus: w.camera1
+    }
+
+    agent iluminacao: iluminacao.asl{
+      focus: w.cortina1
+      focus: w.lampada1
     }
 
     workspace w {
-      artifact porta1: artifacts.Tranca(100.0, 1)
-      artifact janela1: artifacts.Tranca(100.0, 1)
+      artifact porta1: artifacts.Tranca(0, 1)
+      artifact janela1: artifacts.Janela(0, 1)
+      artifact camera1: artifacts.Camera(0, 1)
+      artifact lampada1: artifacts.Lampada(0, 1)
+      artifact cortina1: artifacts.Cortina()
     }
-
-    
-
 }

@@ -6,10 +6,10 @@ import cartago.*;
 import jason.asSyntax.Literal;
 import jason.environment.grid.Location;
 
-public class CA extends Artifact {
+public class Cortina extends Artifact {
 	
-	private boolean isClosed;
-    private boolean isFullOpen;
+	private int isClosed;
+    private int isFullOpen;
     private int nivelCortina;
 	
 	void init() {
@@ -23,15 +23,21 @@ public class CA extends Artifact {
 
 	@OPERATION
 	void aumentar_nivel() {
-		ObsProperty prop = getObsProperty("nivel cortina")
-        if(prop < 3){prop.updateValue(nivelCortina+1);}
+
+		ObsProperty prop = getObsProperty("nivel cortina");
+		
+        if(nivelCortina < 3){
+			prop.updateValue(nivelCortina+1);
+		}
 	}
 	
 
 	@OPERATION
 	void diminuir_nivel() {
-		ObsProperty prop = getObsProperty("nivel cortina")
-        if(prop > 0){prop.updateValue(nivelCortina-1);}
+		ObsProperty prop = getObsProperty("nivel cortina");
+        if(nivelCortina > 0){
+			prop.updateValue(nivelCortina-1);
+		}
         
 	}
 
@@ -39,15 +45,19 @@ public class CA extends Artifact {
 	void fechar() {
 		ObsProperty prop = getObsProperty("nivel cortina");
         ObsProperty prop1 = getObsProperty("fechada");
-        if(prop > 0){prop.updateValue(0);}
+
+		prop.updateValue(0);
         prop1.updateValue(1);
+		
 	}
 	
 	@OPERATION
 	void abrir() {
-		ObsProperty prop = getObsProperty("aberta");
-		if(prop < 3){prop.updateValue(3);}
-        prop.updateValue(1);
+		ObsProperty prop = getObsProperty("nivel cortina");
+		ObsProperty prop1 = getObsProperty("aberta");
+		
+		prop.updateValue(3);
+        prop1.updateValue(1);
 	}
 	
 }
