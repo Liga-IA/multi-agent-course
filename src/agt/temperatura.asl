@@ -2,49 +2,59 @@
 
 /* Initial beliefs and rules */
 
+temperatura_de_preferencia(jonas,25).
+
 /* Initial goals */
 
-!test_gui.
+!inicializar_AC.
 
-+!test_gui
-  <- makeArtifact("gui","artifacts.MySimpleGUI",[],D);
-  		focus(D);
-  		println("Hello").
++!inicializar_AC
+  <- 	makeArtifact("ac","artifacts.AC",[],D);
+  	   	focus(D);
+  	   	!definir_temperatura;
+  	   	!!climatizar.
 
-  
-+ok : temperaturaAtual(TA) & temperaturaDesejada(T)
-  <-  .print("Valores: ");
-  	  .print("\n Temperatura Atual: ", TA, "\n Temperatura Desejada: ", T);
-  	  !create_ac.
++alterado : temperatura_ambiente(TA) & temperatura_ac(TAC)
+  <-  .drop_intention(climatizar);
+  	  .print("Houve interação com o AC");
+  	  .print("Temperatura Ambiente: ", TA);
+ 	  .print("Temperatura Desejada: ", TAC);
+  	  !!climatizar.
       
-+closed  <-  .print("Close").
-
- +!create_ac: temperaturaAtual(TA) & temperaturaDesejada(TD)
- 	<- makeArtifact("ac","artifacts.AC",[TA,TD],D);
-  	   focus(D);
-  	   !climatizar.
-  	   
- +!climatizar: temperatura_ambiente(TA) & temperatura(T) & TA > T & ligado(false)
- 	<-   ligar(T);
- 		.print("Ligar.. ");
- 		.print("Temperatura: ", TA);
- 		.wait(1000);
- 		!climatizar.
- 		
-  +!climatizar: temperatura_ambiente(TA) & temperatura(T) & TA > T & ligado(true)
- 	<-   consultar;
- 		?temperatura_ambiente(TA2);
- 		.print("Aguardando regularizar temperatura para desligar ");
- 		.print("Temperatura: ", TA2);
- 		.wait(1000);
- 		!climatizar.
++closed  <-  .print("Close event from GUIInterface").
+   
+ +!definir_temperatura: temperatura_ambiente(TA) & temperatura_ac(TAC) 
+ 			& temperatura_de_preferencia(User,TP) & TP \== TD & ligado(false)
+ 	<-  definir_temperatura(TP);
+ 		.print("Definindo temperatura baseado na preferência do usuário ", User);
+ 		.print("Temperatura: ", TP).
  	
-  +!climatizar: temperatura_ambiente(TA) & temperatura(T) & TA == T & ligado(true)
+ +!definir_temperatura: temperatura_ambiente(TA) & temperatura_ac(TAC) & ligado(false)
+ 	<-  .print("Usando ultima temperatura");
+ 		.print("Temperatura: ", TAC).
+ 		
+ 		
+ +!climatizar: temperatura_ambiente(TA) & temperatura_ac(TAC) & TA \== TAC & ligado(false)
+ 	<-   ligar;
+ 		.print("Ligando AC");
+ 		.print("Temperatura Ambiente: ", TA);
+ 		.print("Temperatura Desejada: ", TAC);
+ 		.wait(1000);
+ 		!!climatizar.
+ 		
+ +!climatizar: temperatura_ambiente(TA) & temperatura_ac(TAC) & TA \== TAC & ligado(true) 
+ 	<-  .print("Aguardando regularizar temperatura para desligar!");
+ 		.print("Temperatura Ambiente: ", TA);
+ 		.print("Temperatura Desejada: ", TAC);
+ 		.wait(1000);
+ 		!!climatizar.
+ 		 	
+  +!climatizar: temperatura_ambiente(TA) & temperatura_ac(TAC) & TA == TAC & ligado(true) 
  	<-   desligar;
- 		.print("Desligar.. ");
- 		.print("Temperatura: ", TA).
+ 		.print("Desligando AC");
+ 		.print("Temperatura Ambiente: ", TA);
+ 		.print("Temperatura Desejada: ", TAC).
 
-  
  +!climatizar 
  	<- 	.print("Nao foram implementadas outras opcoes");
  		.print("TEMPERATURA REGULARIZADA").

@@ -2,58 +2,176 @@
 
 package artifacts;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import artifacts.AC.ArCondicionado;
+import artifacts.AC.InterfaceAC;
 import cartago.*;
+import cartago.tools.GUIArtifact;
 import jason.asSyntax.Literal;
 import jason.environment.grid.Location;
 
-
-public class Camera extends Artifact {
-    
-	private int desligada;
-	private int ligada;
-	private int filmando;
-    
-    void init(int valorInicialDesligada, int valorInicialLigada) {
-		ligada = valorInicialLigada;
-		if (ligada == 1) {
-			signal("esta ligada");
-            if(filmando == 1){
-                signal("esta ligada e filmando");
-            }
-		} 
-        else {
-			signal("esta desligada");
-		}
-
-		defineObsProperty("ligada", ligada);
-		defineObsProperty("desligada", desligada);
-        defineObsProperty("filmando", filmando);	
+public class Camera extends GUIArtifact {
 	
+	private InterfaceAC frame;
+	private CameraLocal camera_model = new CameraLocal(true,"frente", "Joao");
+    
+    void setup(String local, String pessoa) {
+    	camera_model.setLocal(local);
+    	camera_model.setPessoa(pessoa);
+		defineObsProperty("ligada", camera_model.isOn());
+        defineObsProperty("local", camera_model.getLocal());	
+        defineObsProperty("pessoa", camera_model.getPessoa());	
+        create_frame();
 	}
-
-    @OPERATION
-    void filmar() {
-        ObsProperty prop = getObsProperty("filmando");
-        prop.updateValue(1);
-        signal("tick");
+    
+    public void setup() {
+		defineObsProperty("ligada", camera_model.isOn());
+        defineObsProperty("local", camera_model.getLocal());	
+        defineObsProperty("pessoa", camera_model.getPessoa());	
+        create_frame();
+	}
+    
+    void create_frame() {
+    	frame = new InterfaceAC();
+		linkActionEventToOp(frame.okButton,"ok");
+		linkWindowClosingEventToOp(frame, "closed");
+		frame.setVisible(true);
     }
+    
 
 	@OPERATION
 	void ligar() {
-		ObsProperty prop = getObsProperty("ligada");
-		prop.updateValue(1);
-		signal("tick");
+		camera_model.setOn(true);
+		getObsProperty("ligada").updateValue(camera_model.isOn());
 	}
 
 	@OPERATION
 	void desligar() {
-		ObsProperty prop = getObsProperty("desligada");
-		ObsProperty prop2 = getObsProperty("filmando");
+		camera_model.setOn(false);
+		getObsProperty("ligada").updateValue(camera_model.isOn());
+	}
+	
+	@INTERNAL_OPERATION void ok(ActionEvent ev){
+		camera_model.setLocal(frame.getLocal());
+		camera_model.setPessoa(frame.getPessoa());
+		getObsProperty("local").updateValue(camera_model.getLocal());
+		getObsProperty("pessoa").updateValue(camera_model.getPessoa());
+		signal("movimento");
+	}
+	
+	@INTERNAL_OPERATION void closed(WindowEvent ev){
+		signal("closed");
+	}
+	
+// se necessário simular alguma coisa, usando uma thread JAVA, 
+//	pode-se chamar atualizar_artefato() e colocar as mudanças  em update()	
+//	@OPERATION void update(){
+//	
+//	}
+//	void atualiza_artefato(){
+//		execInternalOp("update");
+//	}
+//	
+	class CameraLocal {
+		
+		private boolean isOn = false;
+		private String local = "unknown";
+		private String pessoa;
+		
+		public CameraLocal(boolean isOn, String local, String p) {
+			super();
+			this.isOn = isOn;
+			this.local = local;
+			this.pessoa = p;
+		}
 
-		prop2.updateValue(0);
-        prop.updateValue(0);
-        signal("tick");
-    }
+		public boolean isOn() {
+			return isOn;
+		}
+
+		public void setOn(boolean isOn) {
+			this.isOn = isOn;
+		}
+
+		public String getLocal() {
+			return local;
+		}
+
+		public void setLocal(String local) {
+			this.local = local;
+		}
+
+		public String getPessoa() {
+			return pessoa;
+		}
+
+		public void setPessoa(String pessoa) {
+			this.pessoa = pessoa;
+		}
+
+	}
+	
+class InterfaceAC extends JFrame {	
+		
+		private JButton okButton;
+		private JTextField pessoa;
+		private JTextField local;
+		
+		public InterfaceAC(){
+			setTitle(" Camera ");
+			setSize(200,300);
+						
+			JPanel panel = new JPanel();
+			JLabel pessoaL = new JLabel();
+			pessoaL.setText("Temperatura Atual:    ");
+			JLabel localL = new JLabel();
+			localL.setText("Temperatura Desejada: ");
+			setContentPane(panel);
+			
+			okButton = new JButton("ok");
+			okButton.setSize(80,50);
+			
+			pessoa = new JTextField(10);
+			pessoa.setText("Jonas");
+			pessoa.setEditable(true);
+			
+			local = new JTextField(10);
+			local.setText("frente");
+			local.setEditable(true);
+			
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+			panel.add(pessoaL);
+			panel.add(pessoa);
+			panel.add(localL);
+			panel.add(local);
+			panel.add(okButton);
+			
+		}
+		
+		public String getPessoa(){
+			return pessoa.getText();
+		}
+		
+		public String getLocal(){
+			return local.getText();
+		}
+	}
+	
+}
+
+	
 
     
-}
+
