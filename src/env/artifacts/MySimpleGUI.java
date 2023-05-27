@@ -21,18 +21,6 @@ public class MySimpleGUI extends GUIArtifact {
 		frame.setVisible(true);		
 	}
 
-	@INTERNAL_OPERATION void ok(ActionEvent ev){
-		getObsProperty("temperaturaAtual").updateValue(Integer.parseInt(frame.getTemperaturaA()));
-		getObsProperty("temperaturaDesejada").updateValue(Integer.parseInt(frame.getTemperatura()));
-		getObsProperty("umidadeAtual").updateValue(Integer.parseInt(frame.getUmidadeA()));
-		getObsProperty("umidadeDesejada").updateValue(Integer.parseInt(frame.getUmidade()));
-		signal("ok");
-		
-	}
-
-	@INTERNAL_OPERATION void closed(WindowEvent ev){
-		signal("closed");
-	}
 	
 	@OPERATION void println(String value){
 		System.out.println(value);;

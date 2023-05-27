@@ -1,8 +1,8 @@
 /*
-   Project doors_windows_liara
+   Project multiagent_course
 
    Gradle build file for JaCaMo Applications
-   April 17, 2023 - 20:33:12
+   May 13, 2023 - 13:37:19
 */
 
 defaultTasks 'run'
@@ -13,26 +13,25 @@ apply plugin: 'eclipse'
 version '1.0'
 group   'org.jacamo'
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(15)
-    }
-}
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
-    maven { url "https://raw.githubusercontent.com/jacamo-lang/mvn-repo/master" }
-    maven { url "https://repo.gradle.org/gradle/libs-releases" }
+    maven { url "http://jacamo.sourceforge.net/maven2" }
+    maven { url "https://raw.github.com/jacamo-lang/mvn-repo/master" }
+    maven { url "https://repo.gradle.org/gradle/libs-releases-local" }
 
-    //maven { url "http://jacamo.sourceforge.net/maven2" }
     //maven { url "https://jade.tilab.com/maven/" }
 
-    flatDir { dirs 'lib' }
+    flatDir {
+       dirs 'lib'
+    }
 
-    mavenCentral()
+    mavenCentral()    
 }
 
 dependencies {
-    implementation('org.jacamo:jacamo:1.1')
+    compile group: 'org.jacamo', name: 'jacamo', version: '1.0'
 }
 
 sourceSets {
@@ -41,7 +40,6 @@ sourceSets {
             srcDir 'src/env'
             srcDir 'src/agt'
             srcDir 'src/org'
-            srcDir 'src/int'
             srcDir 'src/java'
         }
         resources {
@@ -57,8 +55,7 @@ task run (type: JavaExec, dependsOn: 'classes') {
         mkdir 'log'
     }
     main 'jacamo.infra.JaCaMoLauncher'
-    args 'doors_windows_liara.jcm'
-    // jvmArgs '-Xss15m'
+    args 'multiagent_course.jcm'
     classpath sourceSets.main.runtimeClasspath
 }
 
@@ -66,18 +63,15 @@ task run (type: JavaExec, dependsOn: 'classes') {
 task uberJar(type: Jar, dependsOn: 'classes') {
     group      ' JaCaMo'
     description 'creates a single runnable jar file with all dependencies'
-    duplicatesStrategy 'exclude'
 
     manifest {
         attributes 'Main-Class': 'jacamo.infra.JaCaMoLauncher'
     }
-    archiveBaseName = 'jacamo-doors_windows_liara' // the name must start with jacamo so that jacamo...jar is found in the classpath
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    baseName = 'jacamo-multiagent_course' // the name must start with jacamo so that jacamo...jar is found in the classpath
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     from (project.projectDir.absolutePath) {
         include '**/*.asl'
         include '**/*.xml'
-        include '**/*.sai'
-        include '**/*.ptl'
         include '**/*.jcm'
         include '*.properties'
     }
@@ -88,8 +82,8 @@ task uberJar(type: Jar, dependsOn: 'classes') {
 
     doFirst {
         copy {
-            from 'doors_windows_liara.jcm'
-            rename 'doors_windows_liara.jcm','default.jcm'
+            from 'multiagent_course.jcm'
+            rename 'multiagent_course.jcm','default.jcm'
             into project.buildDir.absolutePath + '/jcm'
         }
     }

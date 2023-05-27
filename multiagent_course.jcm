@@ -1,0 +1,22 @@
+/*
+    multiagent_course
+    ---------------------------
+
+    JaCaMo Application File
+
+    This file defines the initial state of the MAS (initial agents, environment, organisation, ....)
+
+    (see jacamo/doc/jcm.html for more information about what can be defined in this file)
+
+    JaCaMo 1.0
+    May 13, 2023 - 13:37:19
+*/
+
+mas multiagent_course {
+
+    agent temperatura: camera.asl
+
+    
+
+}
+
