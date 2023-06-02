@@ -26,16 +26,18 @@ public class AC extends GUIArtifact {
 	private ArCondicionado ac_model = new ArCondicionado(false, 35, 25);
 	
 	public void setup() {
-		
-		frame = new InterfaceAC();
-		linkActionEventToOp(frame.okButton,"ok");
-		linkWindowClosingEventToOp(frame, "closed");
-		
 		defineObsProperty("ligado", ac_model.isOn());
 		defineObsProperty("temperatura_ambiente", ac_model.getTemperatura_ambiente());
 		defineObsProperty("temperatura_ac", ac_model.getTemperatura());
 		System.out.println("Inicializado com " + ac_model.getTemperatura());
 		
+		create_frame();
+	}
+	
+	void create_frame() {
+		frame = new InterfaceAC();
+		linkActionEventToOp(frame.okButton,"ok");
+		linkWindowClosingEventToOp(frame, "closed");
 		frame.setVisible(true);		
 	}
 	
@@ -61,7 +63,8 @@ public class AC extends GUIArtifact {
 		getObsProperty("temperatura_ac").updateValue(ac_model.getTemperatura());
 	}
 	
-	@INTERNAL_OPERATION void ok(ActionEvent ev){
+	@INTERNAL_OPERATION 
+	void ok(ActionEvent ev){
 		ac_model.setTemperatura(Integer.parseInt(frame.getTemperaturaD()));
 		ac_model.setTemperatura_ambiente(Integer.parseInt(frame.getTemperaturaA()));
 		getObsProperty("temperatura_ac").updateValue(ac_model.getTemperatura());
@@ -69,11 +72,13 @@ public class AC extends GUIArtifact {
 		signal("alterado");
 	}
 
-	@INTERNAL_OPERATION void closed(WindowEvent ev){
+	@INTERNAL_OPERATION 
+	void closed(WindowEvent ev){
 		signal("closed");
 	}
 	
-	@OPERATION void update(){
+	@OPERATION 
+	void update(){
 		getObsProperty("temperatura_ambiente").updateValue(ac_model.getTemperatura_ambiente());
 		// commit();
 		System.out.println("temperatura ==>> " + ac_model.getTemperatura_ambiente());

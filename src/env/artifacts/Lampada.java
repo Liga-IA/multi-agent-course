@@ -1,40 +1,113 @@
 package artifacts;
 
 import cartago.*;
+import cartago.tools.GUIArtifact;
 import jason.asSyntax.Literal;
+
+import java.awt.event.ActionEvent;
 import java.lang.Math;
 
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-public class Lampada extends Artifact{
-    
-	private int desligada;
-	private int ligada;
-    
-    void init(int valorInicialDesligada, int valorInicialLigada) {
-		ligada = valorInicialLigada;
-		if (ligada == 1) {
-			signal("esta ligada");
-		} else {
-			signal("esta desligada");
-		}
+import artifacts.Camera.InterfaceAC;
+import artifacts.Cortina.CortinaModel;
+import artifacts.Cortina.InterfaceCortina;
 
-		defineObsProperty("ligada", ligada);
-		defineObsProperty("desligada", desligada);	
+
+public class Lampada extends GUIArtifact{
+    
+	private InterfaceLampada frame;
+	private LampadaModel lampada_model = new LampadaModel(false);
+    
+    void setup(boolean ligada) {
+    	lampada_model.setOn(ligada);
+		defineObsProperty("ligada", lampada_model.isOn());
+		create_frame();
 	}
+    
+    public void setup() {
+    	lampada_model.setOn(false);
+		defineObsProperty("ligada", lampada_model.isOn());
+		create_frame();
+	}
+    
+    void create_frame() {
+    	frame = new InterfaceLampada();
+		linkActionEventToOp(frame.okButton,"ok");
+		linkWindowClosingEventToOp(frame, "closed");
+		frame.setVisible(true);
+    }
 
 	@OPERATION
 	void ligar() {
-		ObsProperty prop = getObsProperty("ligada");
-		prop.updateValue(1);
-		signal("tick");
+		lampada_model.setOn(true);
+		getObsProperty("ligada").updateValue(lampada_model.isOn());
 	}
 
 	@OPERATION
 	void desligar() {
-		ObsProperty prop = getObsProperty("desligada");
-        prop.updateValue(0);
-        signal("tick");
+		lampada_model.setOn(false);
+		getObsProperty("ligada").updateValue(lampada_model.isOn());
     }
+	
+	@INTERNAL_OPERATION 
+	void ok(ActionEvent ev){
+		if (lampada_model.isOn()) {
+			lampada_model.setOn(false);
+			getObsProperty("ligada").updateValue(lampada_model.isOn());
+		}else {
+			lampada_model.setOn(true);
+			getObsProperty("ligada").updateValue(lampada_model.isOn());
+		}
+		signal("interuptor");
+	}
+	
+	class LampadaModel {
+		
+		boolean isOn = false;
+
+		public LampadaModel(boolean isOn) {
+			super();
+			this.isOn = isOn;
+		}
+
+		public boolean isOn() {
+			return isOn;
+		}
+
+		public void setOn(boolean isOn) {
+			this.isOn = isOn;
+		}
+				
+	}
+	
+	class InterfaceLampada extends JFrame {	
+		
+		private JButton okButton;
+		
+		public InterfaceLampada(){
+			setTitle(" Lampada ");
+			setSize(200,100);
+						
+			JPanel panel = new JPanel();
+			JLabel label = new JLabel();
+			label.setText("Ligar/Desligar: ");
+			setContentPane(panel);
+			
+			okButton = new JButton("L/D");
+			okButton.setSize(80,50);
+
+			panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+			panel.add(label);
+			panel.add(okButton);
+			
+		}
+	}
 
 
 }

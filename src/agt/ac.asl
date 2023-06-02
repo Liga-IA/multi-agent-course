@@ -9,7 +9,7 @@ temperatura_de_preferencia(jonas,25).
 !inicializar_AC.
 
 +!inicializar_AC
-  <- 	makeArtifact("ac","artifacts.AC",[],D);
+  <- 	makeArtifact("ac_quarto","artifacts.AC",[],D);
   	   	focus(D);
   	   	!definir_temperatura;
   	   	!!climatizar.

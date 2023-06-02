@@ -14,9 +14,10 @@
 
 mas multiagent_course {
 
-    agent temperatura: camera.asl
-
-    
-
+   agent ar_condicionado: ac.asl
+   agent camera: camera.asl
+   agent cortina: cortina.asl
+   agent lampada: lampada.asl
+   agent fechadura: fechadura.asl
+ 
 }
-

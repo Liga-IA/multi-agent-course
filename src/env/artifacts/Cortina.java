@@ -2,63 +2,129 @@
 
 package artifacts;
 
+import java.awt.event.ActionEvent;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+
+import artifacts.Camera.CameraLocal;
+import artifacts.Camera.InterfaceAC;
 import cartago.*;
+import cartago.tools.GUIArtifact;
 import jason.asSyntax.Literal;
 import jason.environment.grid.Location;
 
-public class Cortina extends Artifact {
+public class Cortina extends GUIArtifact {
 	
-	private int isClosed;
-    private int isFullOpen;
-    private int nivelCortina;
+	private InterfaceCortina frame;
+	private int avanco = 10; // define o avanço para fechamento e abertura
+	private CortinaModel cortina_model = new CortinaModel(0);
 	
-	void init() {
-        isClosed = 1;
-        isFullOpen = 0;
-        nivelCortina = 0;
-		defineObsProperty("fechada", isClosed);
-		defineObsProperty("aberta", isFullOpen);
-		defineObsProperty("nivel cortina", nivelCortina);
+    void setup(int nivel) {
+    	cortina_model.setNivel_abertura(nivel);
+		defineObsProperty("nivel_abertura", cortina_model.getNivel_abertura());
+		create_frame();
 	}
+    
+    public void setup() {
+		defineObsProperty("nivel_abertura", cortina_model.getNivel_abertura());
+		create_frame();
+	}
+	
+    void create_frame() {
+    	frame = new InterfaceCortina();
+		linkActionEventToOp(frame.okButton,"ok");
+		frame.setVisible(true);
+    }
+    
 
 	@OPERATION
 	void aumentar_nivel() {
-
-		ObsProperty prop = getObsProperty("nivel cortina");
-		
-        if(nivelCortina < 3){
-			prop.updateValue(nivelCortina+1);
-		}
+		cortina_model.setNivel_abertura(cortina_model.getNivel_abertura()+avanco); // abre ou fecha 10% por vez
+		getObsProperty("nivel_abertura").updateValue(cortina_model.getNivel_abertura());
 	}
 	
-
 	@OPERATION
 	void diminuir_nivel() {
-		ObsProperty prop = getObsProperty("nivel cortina");
-        if(nivelCortina > 0){
-			prop.updateValue(nivelCortina-1);
-		}
-        
+		cortina_model.setNivel_abertura(cortina_model.getNivel_abertura()-avanco); // abre ou fecha 10% por vez
+		getObsProperty("nivel_abertura").updateValue(cortina_model.getNivel_abertura());
 	}
 
 	@OPERATION
 	void fechar() {
-		ObsProperty prop = getObsProperty("nivel cortina");
-        ObsProperty prop1 = getObsProperty("fechada");
-
-		prop.updateValue(0);
-        prop1.updateValue(1);
-		
+		cortina_model.setNivel_abertura(0); 
+		getObsProperty("nivel_abertura").updateValue(cortina_model.getNivel_abertura());
 	}
 	
 	@OPERATION
-	void abrir() {
-		ObsProperty prop = getObsProperty("nivel cortina");
-		ObsProperty prop1 = getObsProperty("aberta");
-		
-		prop.updateValue(3);
-        prop1.updateValue(1);
+	void abrir()  {
+		cortina_model.setNivel_abertura(100); 
+		getObsProperty("nivel_abertura").updateValue(cortina_model.getNivel_abertura());
 	}
+	
+	@INTERNAL_OPERATION 
+	void ok(ActionEvent ev){
+		cortina_model.setNivel_abertura(frame.getnivel());
+		getObsProperty("nivel_abertura").updateValue(cortina_model.getNivel_abertura());
+		signal("ajuste_cortina");
+	}
+
+	
+class CortinaModel{
+	
+	// 0 = fechada, 50 = meio aberta, 100 = totalmente aberta (possível usar mais valores)
+	int nivel_abertura = 0;
+
+	public CortinaModel(int nivel_abertura) {
+		this.nivel_abertura = nivel_abertura;
+	}
+
+	public int getNivel_abertura() {
+		return nivel_abertura;
+	}
+
+	public void setNivel_abertura(int nivel_abertura) {
+		this.nivel_abertura = nivel_abertura;
+	}
+	
+}
+
+class InterfaceCortina extends JFrame {	
+	
+	private JButton okButton;
+	private JTextField nivel;
+	
+	public InterfaceCortina(){
+		setTitle(" Cortina ");
+		setSize(200,300);
+					
+		JPanel panel = new JPanel();
+		JLabel nivelL = new JLabel();
+		nivelL.setText("Nivel de abertura:    ");
+		setContentPane(panel);
+		
+		okButton = new JButton("ok");
+		okButton.setSize(80,50);
+		
+		nivel = new JTextField(10);
+		nivel.setText("0");
+		nivel.setEditable(true);
+		
+		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+		panel.add(nivelL);
+		panel.add(nivel);
+		panel.add(okButton);
+		
+	}
+	
+	public int getnivel(){
+		return Integer.parseInt(nivel.getText());
+	}
+}
 	
 }
 

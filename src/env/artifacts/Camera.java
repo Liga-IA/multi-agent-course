@@ -25,21 +25,21 @@ import jason.environment.grid.Location;
 public class Camera extends GUIArtifact {
 	
 	private InterfaceAC frame;
-	private CameraLocal camera_model = new CameraLocal(true,"frente", "Joao");
+	private CameraLocal camera_model = new CameraLocal(true,"frente", "ninguem");
     
-    void setup(String local, String pessoa) {
+    public void setup(String local, String pessoa) {
     	camera_model.setLocal(local);
     	camera_model.setPessoa(pessoa);
 		defineObsProperty("ligada", camera_model.isOn());
         defineObsProperty("local", camera_model.getLocal());	
-        defineObsProperty("pessoa", camera_model.getPessoa());	
+        defineObsProperty("pessoa_presente", camera_model.getPessoa());	
         create_frame();
 	}
     
     public void setup() {
 		defineObsProperty("ligada", camera_model.isOn());
         defineObsProperty("local", camera_model.getLocal());	
-        defineObsProperty("pessoa", camera_model.getPessoa());	
+        defineObsProperty("pessoa_presente", camera_model.getPessoa());	
         create_frame();
 	}
     
@@ -63,11 +63,12 @@ public class Camera extends GUIArtifact {
 		getObsProperty("ligada").updateValue(camera_model.isOn());
 	}
 	
-	@INTERNAL_OPERATION void ok(ActionEvent ev){
+	@INTERNAL_OPERATION 
+	void ok(ActionEvent ev){
 		camera_model.setLocal(frame.getLocal());
 		camera_model.setPessoa(frame.getPessoa());
 		getObsProperty("local").updateValue(camera_model.getLocal());
-		getObsProperty("pessoa").updateValue(camera_model.getPessoa());
+		getObsProperty("pessoa_presente").updateValue(camera_model.getPessoa());
 		signal("movimento");
 	}
 	
@@ -88,7 +89,7 @@ public class Camera extends GUIArtifact {
 		
 		private boolean isOn = false;
 		private String local = "unknown";
-		private String pessoa;
+		private String pessoa = "noone";
 		
 		public CameraLocal(boolean isOn, String local, String p) {
 			super();

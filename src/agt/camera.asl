@@ -2,7 +2,7 @@
 !inicializar_camera.
 
 +!inicializar_camera
-  <- 	makeArtifact("camera_frente","artifacts.Camera",[],D);
+  <- 	makeArtifact("camera_quarto","artifacts.Camera",[],D);
   	   	focus(D).
   	   	
 +movimento 
@@ -10,5 +10,5 @@
       
 +closed  <-  .print("Close event from GUIInterface").
    
- +!verificar_pessoa: pessoa(P) & local(L)
+ +!verificar_pessoa: pessoa_presente(P) & local(L)
  	<-  .print("Pessoa: ", P, " reconhecida no local ", L).
